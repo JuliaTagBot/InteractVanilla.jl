@@ -1,5 +1,16 @@
 module InteractVanilla
 
-greet() = print("Hello World!")
+using WebIO: node, Node, instanceof, props, children, Scope, JSString, @js_str, onimport,
+             setobservable!, onjs, WebIO
+using Widgets: AbstractWidget, Widget, Widgets, scope
+using Observables: on, Observable, AbstractObservable, ObservablePair, observe, Observables
+using Dates
+using Colors: Colorant, hex
+using UUIDs: uuid4
+
+import JSON
+
+include("component.jl")
+include("input.jl")
 
 end # module
