@@ -14,12 +14,9 @@ function input(;
 
     value isa AbstractObservable || (value = Observable(value))
 
-    scp = Scope()
+    scp = bulmascope()
     setobservable!(scp, "changes", Observable(0))
-    
-    n = addreactivity!(scp, :input; events = events, value = value, type = type, kwargs...)
-
-    scp.dom = n
+    addreactivity!(scp, :input; forceclasses = ["input"], events = events, value = value, type = type, kwargs...)
 
     Widget{:input}(
         scope = scp,
