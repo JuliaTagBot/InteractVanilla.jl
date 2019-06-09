@@ -7,16 +7,16 @@ function () {
 """
 
 function input(;
-               events = Dict(:input => updatevalue, :change => countchanges),
+               imports = String[],
+               addevents = Dict(:input => updatevalue, :change => countchanges),
                value = "",
-               type = "text",
                kwargs...)
 
     value isa AbstractObservable || (value = Observable(value))
 
-    scp = bulmascope()
+    scp = Scope(imports = imports)
     setobservable!(scp, "changes", Observable(0))
-    addreactivity!(scp, :input; forceclasses = ["input"], events = events, value = value, type = type, kwargs...)
+    addreactivity!(scp, :input; addevents = addevents, value = value, kwargs...)
 
     Widget{:input}(
         scope = scp,
