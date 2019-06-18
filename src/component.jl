@@ -1,7 +1,20 @@
+abstract type AbstractVanillaWidget{T} <: AbstractObservable{T} end
+Observables.observe(a::AbstractVanillaWidget) = observe(value(a))
+Base.getproperty(a::AbstractVanillaWidget, s::Symbol) = getproperty(props(a), s)
+Base.propertynames(a::AbstractVanillaWidget) = propertynames(props(a))
+
 _get_value(x) = x
 _get_value(x::AbstractObservable) = x[]
 _get_value(x::AbstractDict) = Dict(key => _get_value(val) for (key, val) in x)
 _get_value(x::NamedTuple) = map(_get_value, x)
+
+to_observable(o::Observable) = o
+to_observable(o::AbstractObservable) = Observables.observe(o)
+to_observable(o) = Observable(o)
+
+const specialprops = (:style, :attributes, :events)
+
+observify((key, val)::Pair) = key in specialprops ? (key => to_observable(val)) : (key => val)
 
 function addreactivity!(scp::Scope, tag, children...; addevents = Dict(),
     id = string("reactivenode-", uuid4()), properties...)
@@ -18,7 +31,6 @@ function addreactivity!(scp::Scope, tag, children...; addevents = Dict(),
     }
     """)
 
-    specialprops = (:style, :attributes, :events)
     for (key, val) in properties
         key in specialprops && continue
         val isa AbstractObservable || continue
